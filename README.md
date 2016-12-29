@@ -1,7 +1,7 @@
 ProtoCentral MAX30205 Human body temperature Sensor Breakout Board
 =========================================================
-[![Laser Sensor](https://www.protocentral.com/4064-large_default/protocentral-vl53l0x-laser-tof-sensor-breakout.jpg)  
-*PROTOCENTRAL VL53L0X LASER TOF SENSOR BREAKOUT (PC-SEN-2001)*](https://www.protocentral.com/motiondistance/1049-protocentral-vl53l0x-laser-tof-sensor-breakout.html)
+[![Laser Sensor](https://github.com/Protocentral/Protocentral_MAX30205/blob/master/extras/board.jpg)  
+*PROTOCENTRAL VL53L0X LASER TOF SENSOR BREAKOUT (PC-SEN-2001)*](https://www.protocentral.com)
 
 The FDC1004 is a single-chip IC for capacitance measurement for application including proximity sensing and liquid level sensing. This is based on the concept of measuring capacitance of an electrode with respect to ground. 
 
@@ -45,7 +45,7 @@ Arduino boards connections
  b. Click on File -> Open and Browse the .ino code for Arduino from Protocentral_MAX30205-master\arduino and export the application to Arduino.
  
  c.  Open serial terminal window, you should see the capacitance values obtained from the Protocentral_MAX30205 Breakout Board as shown below.
-![Read RAW	capacitance](https://www.protocentral.com/img/p/4/2/1/2/4212.jpg?time=1482129242629)
+![Read Temperature](https://github.com/Protocentral/Protocentral_MAX30205/blob/master/extras/output.png)
 
 
 License Information
