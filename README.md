@@ -1,5 +1,5 @@
-ProtoCentral FDC1004 Capacitance Sensor Breakout Board
-================================
+ProtoCentral MAX30205 Human body temperature Sensor Breakout Board
+=========================================================
 [![Laser Sensor](https://www.protocentral.com/4064-large_default/protocentral-vl53l0x-laser-tof-sensor-breakout.jpg)  
 *PROTOCENTRAL VL53L0X LASER TOF SENSOR BREAKOUT (PC-SEN-2001)*](https://www.protocentral.com/motiondistance/1049-protocentral-vl53l0x-laser-tof-sensor-breakout.html)
 
@@ -11,21 +11,15 @@ We have made several cool projects with it including proximity sensing and liqui
 
 Features:
 ---------
-Breakout contains the Texas Instruments FDC1004 IC 
-4 channel measurement
 On-board 3.3V voltage regulator
-Output data rates up to 400 Samples/second
 Easy-to-use I2C interface
 
 Specifications:
 ---------------
-Capacitance measurement range: +/- 15 pF
-Resolution: 0.5 fF
-Maximum offset capacitance: 100 pF
 
 Includes:
 ----------
-* 1x ProtoCentral FDC1004 Capacitance Sensor Breakout Board
+* 1x ProtoCentral MAX30205 Sensor Breakout Board
 * 1x Set of breakaway headers
 
 Repository Contents
@@ -37,20 +31,20 @@ Repository Contents
 Arduino boards connections
 
 
-    Arduino   FDC1004 board
+    Arduino  Max30205 board
     -------   -------------
          5V - VCC
         GND - GND
          A4 - SDA
          A5 - SCL
  
-###  Uploading Arduino Sketch For FDC1004 breakout
+###  Uploading Arduino Sketch For MAX30205 breakout
 
- a. Open the Arduino IDE to load the embedded code for Protocentral_FDC1004.
+ a. Open the Arduino IDE to load the embedded code for Protocentral_MAX30205.
 
- b. Click on File -> Open and Browse the .ino code for Arduino from Protocentral_FDC1004-master\arduino and export the application to Arduino.
+ b. Click on File -> Open and Browse the .ino code for Arduino from Protocentral_MAX30205-master\arduino and export the application to Arduino.
  
- c.  Open serial terminal window, you should see the capacitance values obtained from the FDC1004 Breakout Board as shown below.
+ c.  Open serial terminal window, you should see the capacitance values obtained from the Protocentral_MAX30205 Breakout Board as shown below.
 ![Read RAW	capacitance](https://www.protocentral.com/img/p/4/2/1/2/4212.jpg?time=1482129242629)
 
 
