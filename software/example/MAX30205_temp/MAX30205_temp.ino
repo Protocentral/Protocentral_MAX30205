@@ -1,6 +1,6 @@
 /*
   Protocentral MAX30205 Breakout: Print temperature on terminal
-  https://github.com/sparkfun/MAX30105_Breakout
+  https://github.com/Protocentral/Protocentral_MAX30205
 
   Hardware Connections (Breakoutboard to Arduino):
   5V  - 5V (3.3V is allowed)
