@@ -32,7 +32,7 @@ Arduino boards connections
 
     Arduino  Max30205 board
     -------   -------------
-         5v-   Vin (3.3V also sopported, change solder jumper behind the board.Default will be 5V)
+         5v-   Vin (3.3V also supported, change solder jumper behind the board.Default will be 5V)
         GND - GND
          A4 - SDA
          A5 - SCL
