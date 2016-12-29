@@ -1,20 +1,18 @@
 ProtoCentral MAX30205 Human body temperature Sensor Breakout Board
 =========================================================
-[![Laser Sensor](https://github.com/Protocentral/Protocentral_MAX30205/blob/master/extras/board.jpg)  
-*PROTOCENTRAL MAX30205 human body temperature breakout (PC-SEN-2001)*](https://www.protocentral.com)
+[![Temperature Sensor](https://github.com/Protocentral/Protocentral_MAX30205/blob/master/extras/board.jpg)  
+*PROTOCENTRAL MAX30205 human body temperature breakout (PC-MED-0403)*](https://www.protocentral.com/open-medical-devices/1088-protocentral-max30205-body-temperature-sensor-breakout-board.html)
 
-The MAX30205 temperature sensor accurately measures temperature and provide an overtemperature alarm/ interrupt/shutdown output. This device converts the temperature measurements to digital form using a highresolution, sigma-delta, analog-to-digital converter (ADC
-This breakout board contains everything to connect it to an Arduino's I2C pins and it can be connected to any other platform with support for I2C two-wire interfaces. 
+MAX30205 is the new chip from Maxim which provides accurate human body temperature readings with an accuracy of 0.1 °C
 
-We have made several cool projects with it including proximity sensing and liquid-level sensing from the outside of a tank. Check out our Hackster page (hackster.io/protocentral) for the detailed project description. 
+This is a digital I2C temperature sensor, so an ADC would not be required to read this sensor. It also provide an over-temperature alarm as an interrupt to drive microocontroller interrupt lines. 
 
 Features:
 ---------
-On-board 3.3V voltage regulator
-Easy-to-use I2C interface
-
-Specifications:
----------------
+High Accuracy: 0.1 °C over a range of 37°C to 39°C
+Temperature Resolution: 16-bit (0.00390625°C)
+Digital I2C 2-wire interface
+"OS" open-drain pin can act as thermostat control 
 
 Includes:
 ----------
