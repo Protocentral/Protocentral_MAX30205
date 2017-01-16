@@ -6,20 +6,20 @@
 
 
 
-int MAX30205::getTemperature(void){
-    I2CreadBytes(MAX30205_ADDRESS,MAX30205_TEMPERATURE, *temp ,2);
-	int16_t raw = data1 << 8 | data2;
-    temp = (float)raw  * 0.00390625;
+float MAX30205::getTemperature(void){
+	uint8_t readRaw[2] = {0};  
+    I2CreadBytes(MAX30205_ADDRESS,MAX30205_TEMPERATURE, &readRaw[0] ,2); // read two bytes
+	int16_t raw = readRaw[0] << 8 | readRaw[1];  //combine two bytes
+    temperature = raw  * 0.00390625;     // convert to temperature
+	return  temperature;
 }
 
 void MAX30205::shutdown(void){
-  uint8_t reg = I2CreadByte(MAX30205_ADDRESS, MAX30205_MODE_CONFIG);  // Get the current register
-  I2CwriteByte(MAX30205_ADDRESS, MAX30205_MODE_CONFIG, reg | 0x80);   
+  uint8_t reg = I2CreadByte(MAX30205_ADDRESS, MAX30205_CONFIGURATION);  // Get the current register
+  I2CwriteByte(MAX30205_ADDRESS, MAX30205_CONFIGURATION, reg | 0x80);   
 }
 
-void MAX30205::begin(pulseWidth pw, ledCurrent ir, sampleRate sr){
-
- 
+void MAX30205::begin(void){
   I2CwriteByte(MAX30205_ADDRESS, MAX30205_CONFIGURATION, 0x00); //mode config
   I2CwriteByte(MAX30205_ADDRESS, MAX30205_THYST , 		 0x00); // set threshold
   I2CwriteByte(MAX30205_ADDRESS, MAX30205_TOS, 			 0x00); //  

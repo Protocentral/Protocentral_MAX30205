@@ -3,7 +3,7 @@
   https://github.com/Protocentral/Protocentral_MAX30205
 
   Hardware Connections (Breakoutboard to Arduino):
-  5V  - 5V (3.3V is allowed)
+  Vin  - 5V (3.3V is allowed)
   GND - GND
   SDA - A4 (or SDA)
   SCL - A5 (or SCL)

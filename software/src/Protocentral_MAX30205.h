@@ -3,7 +3,7 @@
   Venkatesh Bhat
   
 */
-#define MAX30100_ADDRESS        0x48  // 8bit address converted to 7bit
+#define MAX30205_ADDRESS        0x48  // 8bit address converted to 7bit
 
 // Registers
 #define MAX30205_TEMPERATURE    0x00  //  get temperature ,Read only
@@ -29,12 +29,15 @@ typedef enum{   	//For configuration registers
 
 
 
-class MAX30100 {
+class MAX30205 {
 public:
-  float temperature = 0;      // Last temperature
-    void  shutdown(void);   // Instructs device to power-save
-  void  printRegisters(void); // Dumps contents of registers for debug
 
+   float temperature = 0;      // Last temperature
+   void  shutdown(void);   // Instructs device to power-save
+   void  printRegisters(void); // Dumps contents of registers for debug
+   void begin(void);
+   float getTemperature(void);
+ 
 private:
   void    I2CwriteByte(uint8_t address, uint8_t subAddress, uint8_t data);
   uint8_t I2CreadByte(uint8_t address, uint8_t subAddress);
