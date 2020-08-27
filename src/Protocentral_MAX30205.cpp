@@ -22,42 +22,58 @@
 
 float MAX30205::getTemperature(void){
 	uint8_t readRaw[2] = {0};
-    I2CreadBytes(MAX30205_ADDRESS,MAX30205_TEMPERATURE, &readRaw[0] ,2); // read two bytes
+    I2CreadBytes(sensorAddress,MAX30205_TEMPERATURE, &readRaw[0] ,2); // read two bytes
 	int16_t raw = readRaw[0] << 8 | readRaw[1];  //combine two bytes
     temperature = raw  * 0.00390625;     // convert to temperature
 	return  temperature;
 }
 
+bool MAX30205::scanAvailableSensors(void){
+  bool sensorFound = false;
+
+  Wire.beginTransmission (MAX30205_ADDRESS1);
+  if (Wire.endTransmission () == 0){
+    sensorAddress = MAX30205_ADDRESS1;
+    sensorFound = true;
+  }
+  
+  Wire.beginTransmission (MAX30205_ADDRESS2);
+  if(Wire.endTransmission () == 0){
+    sensorAddress = MAX30205_ADDRESS2;
+    sensorFound = true;
+  }
+
+  return sensorFound;
+}
+
 void MAX30205::shutdown(void){
-  uint8_t reg = I2CreadByte(MAX30205_ADDRESS, MAX30205_CONFIGURATION);  // Get the current register
-  I2CwriteByte(MAX30205_ADDRESS, MAX30205_CONFIGURATION, reg | 0x80);
+  uint8_t reg = I2CreadByte(sensorAddress, MAX30205_CONFIGURATION);  // Get the current register
+  I2CwriteByte(sensorAddress, MAX30205_CONFIGURATION, reg | 0x80);
 }
 
 void MAX30205::begin(void){
-  I2CwriteByte(MAX30205_ADDRESS, MAX30205_CONFIGURATION, 0x00); //mode config
-  I2CwriteByte(MAX30205_ADDRESS, MAX30205_THYST , 		 0x00); // set threshold
-  I2CwriteByte(MAX30205_ADDRESS, MAX30205_TOS, 			 0x00); //
+  I2CwriteByte(sensorAddress, MAX30205_CONFIGURATION, 0x00); //mode config
+  I2CwriteByte(sensorAddress, MAX30205_THYST , 		 0x00); // set threshold
+  I2CwriteByte(sensorAddress, MAX30205_TOS, 			 0x00); //
 }
 
 void MAX30205::printRegisters(void){
-  Serial.println(I2CreadByte(MAX30205_ADDRESS, MAX30205_TEMPERATURE),  BIN);
-  Serial.println(I2CreadByte(MAX30205_ADDRESS, MAX30205_CONFIGURATION),  BIN);
-  Serial.println(I2CreadByte(MAX30205_ADDRESS, MAX30205_THYST), BIN);
-  Serial.println(I2CreadByte(MAX30205_ADDRESS, MAX30205_TOS), BIN);
+  Serial.println(I2CreadByte(sensorAddress, MAX30205_TEMPERATURE),  BIN);
+  Serial.println(I2CreadByte(sensorAddress, MAX30205_CONFIGURATION),  BIN);
+  Serial.println(I2CreadByte(sensorAddress, MAX30205_THYST), BIN);
+  Serial.println(I2CreadByte(sensorAddress, MAX30205_TOS), BIN);
 
 }
 
 // Wire.h read and write protocols
-void MAX30205::I2CwriteByte(uint8_t address, uint8_t subAddress, uint8_t data)
-{
+void MAX30205::I2CwriteByte(uint8_t address, uint8_t subAddress, uint8_t data){
 	Wire.beginTransmission(address);  // Initialize the Tx buffer
 	Wire.write(subAddress);           // Put slave register address in Tx buffer
 	Wire.write(data);                 // Put data in Tx buffer
 	Wire.endTransmission();           // Send the Tx buffer
 }
 
-uint8_t MAX30205::I2CreadByte(uint8_t address, uint8_t subAddress)
-{
+uint8_t MAX30205::I2CreadByte(uint8_t address, uint8_t subAddress){
 	uint8_t data; // `data` will store the register data
 	Wire.beginTransmission(address);
 	Wire.write(subAddress);
@@ -67,8 +83,7 @@ uint8_t MAX30205::I2CreadByte(uint8_t address, uint8_t subAddress)
 	return data;
 }
 
-void MAX30205::I2CreadBytes(uint8_t address, uint8_t subAddress, uint8_t * dest, uint8_t count)
-{
+void MAX30205::I2CreadBytes(uint8_t address, uint8_t subAddress, uint8_t * dest, uint8_t count){
 	Wire.beginTransmission(address);   // Initialize the Tx buffer
 	// Next send the register to be read. OR with 0x80 to indicate multi-read.
 	Wire.write(subAddress);

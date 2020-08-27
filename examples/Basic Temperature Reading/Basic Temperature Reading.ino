@@ -3,7 +3,7 @@
 //    Arduino example for the MAX30205 body temperature sensor breakout board
 //
 //    Author: Ashwin Whitchurch
-//    Copyright (c) 2018 ProtoCentral
+//    Copyright (c) 2020 ProtoCentral
 //
 //    This software is licensed under the MIT License(http://opensource.org/licenses/MIT).
 //
@@ -25,6 +25,7 @@ Vin  - 5V (3.3V is allowed)
 GND - GND
 SDA - A4 (or SDA)
 SCL - A5 (or SCL)
+
 */
 
 #include <Wire.h>
@@ -32,9 +33,16 @@ SCL - A5 (or SCL)
 MAX30205 tempSensor;
 
 void setup() {
-  // put your setup code here, to run once:
-  Wire.begin();
+
   Serial.begin(9600);
+  Wire.begin();
+
+  //scan for temperature in every 30 sec untill a sensor is found. Scan for both addresses 0x48 and 0x49
+  while(!tempSensor.scanAvailableSensors()){
+    Serial.println("Couldn't find the temperature sensor, please connect the sensor." );
+    delay(30000);
+  }
+
   tempSensor.begin();   // set continuos mode, active mode
 }
 

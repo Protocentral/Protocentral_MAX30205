@@ -16,7 +16,8 @@
 //   For information on how to use, visit https://github.com/protocentral/ProtoCentral_MAX30205
 /////////////////////////////////////////////////////////////////////////////////////////
 
-#define MAX30205_ADDRESS        0x48  // 8bit address converted to 7bit
+#define MAX30205_ADDRESS1        0x49  // 8bit address converted to 7bit
+#define MAX30205_ADDRESS2        0x48  // 8bit address converted to 7bit
 
 // Registers
 #define MAX30205_TEMPERATURE    0x00  //  get temperature ,Read only
@@ -27,7 +28,6 @@
 
 
 typedef unsigned char uint8_t;
-//typedef unsigned int uint16_t;
 
 typedef enum{   	//For configuration registers
   SHUTDOWN,    		// shutdwon mode to reduce power consumption <3.5uA
@@ -41,15 +41,16 @@ typedef enum{   	//For configuration registers
 }configuration;
 
 
-
 class MAX30205 {
 public:
 
-   float temperature = 0;      // Last temperature
-   void  shutdown(void);   // Instructs device to power-save
-   void  printRegisters(void); // Dumps contents of registers for debug
-   void begin(void);
-   float getTemperature(void);
+  float temperature = 0;      // Last temperature
+  uint8_t sensorAddress = MAX30205_ADDRESS1;
+  void  shutdown(void);   // Instructs device to power-save
+  void  printRegisters(void); // Dumps contents of registers for debug
+  void begin(void);
+  float getTemperature(void);
+  bool scanAvailableSensors(void);
 
 private:
   void    I2CwriteByte(uint8_t address, uint8_t subAddress, uint8_t data);
