@@ -59,16 +59,16 @@ void MAX30205::shutdown(void)
 void MAX30205::begin(void)
 {
 	i2c_write_byte(sensorAddress, MAX30205_CONFIGURATION, 0x00); // mode config
-	i2c_write_byte(sensorAddress, MAX30205_THYST, 0x00);		   // set threshold
-	i2c_write_byte(sensorAddress, MAX30205_TOS, 0x00);		   //
+	i2c_write_byte(sensorAddress, MAX30205_THYST, 0x00);		 // set threshold
+	i2c_write_byte(sensorAddress, MAX30205_TOS, 0x00);			 //
 }
 
-void MAX30205::begin(TwoWire &wirePort, bool init_bus)
+void MAX30205::begin(TwoWire &wirePort, bool init_bus, uint8_t address)
 {
 	_wirePort = &wirePort; // Grab which port the user wants us to use
 	if (init_bus)
 		_wirePort->begin(); // Begin the I2C port
-	
+	sensorAddress = address;
 	begin();
 }
 
@@ -84,9 +84,9 @@ void MAX30205::printRegisters(void)
 void MAX30205::i2c_write_byte(uint8_t address, uint8_t subAddress, uint8_t data)
 {
 	_wirePort->beginTransmission(address); // Initialize the Tx buffer
-	_wirePort->write(subAddress);			 // Put slave register address in Tx buffer
-	_wirePort->write(data);				 // Put data in Tx buffer
-	_wirePort->endTransmission();			 // Send the Tx buffer
+	_wirePort->write(subAddress);		   // Put slave register address in Tx buffer
+	_wirePort->write(data);				   // Put data in Tx buffer
+	_wirePort->endTransmission();		   // Send the Tx buffer
 }
 
 uint8_t MAX30205::i2c_read_byte(uint8_t address, uint8_t subAddress)

@@ -49,7 +49,7 @@ public:
   void  shutdown(void);   // Instructs device to power-save
   void  printRegisters(void); // Dumps contents of registers for debug
   void  begin(void);
-  void  begin(TwoWire &wirePort, bool init_bus);
+  void  begin(TwoWire &wirePort, bool init_bus, uint8_t address);
   float getTemperature(void);
   bool  scanAvailableSensors(void);
 

@@ -30,6 +30,7 @@ SCL - A5 (or SCL)
 
 #include <Wire.h>
 #include "Protocentral_MAX30205.h"
+
 MAX30205 tempSensor;
 
 void setup()
@@ -38,14 +39,18 @@ void setup()
   Serial.begin(9600);
   // Wire.begin();
 
-  tempSensor.begin(Wire, true);
+  Wire1.setSDA(6);
+  Wire1.setSCL(7);
+
+  //tempSensor.scanAvailableSensors();
+  tempSensor.begin(Wire1, true, MAX30205_ADDRESS1);
 
   // scan for temperature in every 30 sec untill a sensor is found. Scan for both addresses 0x48 and 0x49
-  while (!tempSensor.scanAvailableSensors())
+  /*while (!tempSensor.scanAvailableSensors())
   {
     Serial.println("Couldn't find the temperature sensor, please connect the sensor.");
     delay(30000);
-  }
+  }*/
 
   // set continuos mode, active mode
 }
