@@ -25,8 +25,6 @@
 #define MAX30205_THYST          0x02  //
 #define MAX30205_TOS            0x03  //
 
-
-
 typedef unsigned char uint8_t;
 
 typedef enum{   	//For configuration registers
@@ -43,12 +41,14 @@ typedef enum{   	//For configuration registers
 
 class MAX30205 {
 public:
+  TwoWire* _wirePort;
 
   float temperature = 0;      // Last temperature
   uint8_t sensorAddress = MAX30205_ADDRESS1;
   void  shutdown(void);   // Instructs device to power-save
   void  printRegisters(void); // Dumps contents of registers for debug
-  void begin(void);
+  void  begin(void);
+  void  begin(TwoWire &wirePort);
   float getTemperature(void);
   bool scanAvailableSensors(void);
 
