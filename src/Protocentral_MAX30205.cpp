@@ -70,6 +70,7 @@ void MAX30205::begin(TwoWire &wirePort, bool init_bus, uint8_t address)
 		_wirePort->begin(); // Begin the I2C port
 	sensorAddress = address;
 	begin();
+	printRegisters();
 }
 
 void MAX30205::printRegisters(void)

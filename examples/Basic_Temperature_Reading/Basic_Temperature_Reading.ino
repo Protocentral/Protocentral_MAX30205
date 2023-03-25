@@ -42,8 +42,8 @@ void setup()
   Wire1.setSDA(6);
   Wire1.setSCL(7);
 
-  //tempSensor.scanAvailableSensors();
-  tempSensor.begin(Wire1, true, MAX30205_ADDRESS1);
+  // tempSensor.scanAvailableSensors();
+  tempSensor.begin(Wire1, true, MAX30205_ADDRESS2);
 
   // scan for temperature in every 30 sec untill a sensor is found. Scan for both addresses 0x48 and 0x49
   /*while (!tempSensor.scanAvailableSensors())
