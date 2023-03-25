@@ -32,24 +32,29 @@ SCL - A5 (or SCL)
 #include "Protocentral_MAX30205.h"
 MAX30205 tempSensor;
 
-void setup() {
+void setup()
+{
 
   Serial.begin(9600);
-  Wire.begin();
+  // Wire.begin();
 
-  //scan for temperature in every 30 sec untill a sensor is found. Scan for both addresses 0x48 and 0x49
-  while(!tempSensor.scanAvailableSensors()){
-    Serial.println("Couldn't find the temperature sensor, please connect the sensor." );
+  tempSensor.begin(Wire, true);
+
+  // scan for temperature in every 30 sec untill a sensor is found. Scan for both addresses 0x48 and 0x49
+  while (!tempSensor.scanAvailableSensors())
+  {
+    Serial.println("Couldn't find the temperature sensor, please connect the sensor.");
     delay(30000);
   }
 
-  tempSensor.begin();   // set continuos mode, active mode
+  // set continuos mode, active mode
 }
 
-void loop() {
+void loop()
+{
 
-	float temp = tempSensor.getTemperature(); // read temperature for every 100ms
-	Serial.print(temp ,2);
-	Serial.println("'c" );
-	delay(100);
+  float temp = tempSensor.getTemperature(); // read temperature for every 100ms
+  Serial.print(temp, 2);
+  Serial.println("'c");
+  delay(100);
 }
