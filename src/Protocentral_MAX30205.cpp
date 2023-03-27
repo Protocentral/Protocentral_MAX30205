@@ -28,17 +28,17 @@ float MAX30205::getTemperature(void){
 	return  temperature;
 }
 
-bool MAX30205::scanAvailableSensors(void){
+bool MAX30205::scanAvailableSensors(){
   bool sensorFound = false;
 
-  Wire.beginTransmission (MAX30205_ADDRESS1);
-  if (Wire.endTransmission () == 0){
+  Wire1.beginTransmission (MAX30205_ADDRESS1);
+  if (Wire1.endTransmission () == 0){
     sensorAddress = MAX30205_ADDRESS1;
     sensorFound = true;
   }
   
-  Wire.beginTransmission (MAX30205_ADDRESS2);
-  if(Wire.endTransmission () == 0){
+  Wire1.beginTransmission (MAX30205_ADDRESS2);
+  if(Wire1.endTransmission () == 0){
     sensorAddress = MAX30205_ADDRESS2;
     sensorFound = true;
   }
@@ -67,31 +67,31 @@ void MAX30205::printRegisters(void){
 
 // Wire.h read and write protocols
 void MAX30205::I2CwriteByte(uint8_t address, uint8_t subAddress, uint8_t data){
-	Wire.beginTransmission(address);  // Initialize the Tx buffer
-	Wire.write(subAddress);           // Put slave register address in Tx buffer
-	Wire.write(data);                 // Put data in Tx buffer
-	Wire.endTransmission();           // Send the Tx buffer
+	Wire1.beginTransmission(address);  // Initialize the Tx buffer
+	Wire1.write(subAddress);           // Put slave register address in Tx buffer
+	Wire1.write(data);                 // Put data in Tx buffer
+	Wire1.endTransmission();           // Send the Tx buffer
 }
 
 uint8_t MAX30205::I2CreadByte(uint8_t address, uint8_t subAddress){
 	uint8_t data; // `data` will store the register data
-	Wire.beginTransmission(address);
-	Wire.write(subAddress);
-	Wire.endTransmission(false);
-	Wire.requestFrom(address, (uint8_t) 1);
-	data = Wire.read();
+	Wire1.beginTransmission(address);
+	Wire1.write(subAddress);
+	Wire1.endTransmission(false);
+	Wire1.requestFrom(address, (uint8_t) 1);
+	data = Wire1.read();
 	return data;
 }
 
 void MAX30205::I2CreadBytes(uint8_t address, uint8_t subAddress, uint8_t * dest, uint8_t count){
-	Wire.beginTransmission(address);   // Initialize the Tx buffer
+	Wire1.beginTransmission(address);   // Initialize the Tx buffer
 	// Next send the register to be read. OR with 0x80 to indicate multi-read.
-	Wire.write(subAddress);
-	Wire.endTransmission(false);
+	Wire1.write(subAddress);
+	Wire1.endTransmission(false);
 	uint8_t i = 0;
-	Wire.requestFrom(address, count);  // Read bytes from slave register address
-	while (Wire.available())
+	Wire1.requestFrom(address, count);  // Read bytes from slave register address
+	while (Wire1.available())
 	{
-		dest[i++] = Wire.read();
+		dest[i++] = Wire1.read();
 	}
 }

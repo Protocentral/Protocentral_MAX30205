@@ -35,7 +35,11 @@ MAX30205 tempSensor;
 void setup() {
 
   Serial.begin(9600);
-  Wire.begin();
+  
+  Wire1.setSDA(6);
+  Wire1.setSCL(7);
+
+  Wire1.begin();
 
   //scan for temperature in every 30 sec untill a sensor is found. Scan for both addresses 0x48 and 0x49
   while(!tempSensor.scanAvailableSensors()){
