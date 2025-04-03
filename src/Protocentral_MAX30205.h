@@ -25,7 +25,7 @@
 #define MAX30205_THYST          0x02  //
 #define MAX30205_TOS            0x03  //
 
-
+#define WIRE Wire
 
 typedef unsigned char uint8_t;
 
@@ -48,14 +48,12 @@ public:
   uint8_t sensorAddress = MAX30205_ADDRESS1;
   void  shutdown(void);   // Instructs device to power-save
   void  printRegisters(void); // Dumps contents of registers for debug
-  void  begin(void);
-  void  begin(TwoWire &wirePort, bool init_bus, uint8_t address);
+  void begin(void);
   float getTemperature(void);
-  bool  scanAvailableSensors(void);
+  bool scanAvailableSensors(void);
 
 private:
-  TwoWire *_wirePort; 
-  void    i2c_write_byte(uint8_t address, uint8_t subAddress, uint8_t data);
-  uint8_t i2c_read_byte(uint8_t address, uint8_t subAddress);
+  void    I2CwriteByte(uint8_t address, uint8_t subAddress, uint8_t data);
+  uint8_t I2CreadByte(uint8_t address, uint8_t subAddress);
   void    I2CreadBytes(uint8_t address, uint8_t subAddress, uint8_t * dest, uint8_t count);
 };
