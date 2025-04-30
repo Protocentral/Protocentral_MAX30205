@@ -34,13 +34,7 @@ Connection with the Arduino board is as follows:
 ![output](./docs/images/output.png)
 
 
-For further details of the board, refer the documentation
-<center>
-
-[ MAX30205 breakout board Documentation](https://docs.protocentral.com/getting-started-with-max30205/)
-
-</center>
-
+## For further details, refer [the documentation on MAX30205 breakout board](https://docs.protocentral.com/getting-started-with-MAX30205//)
 
 License Information
 ===================
