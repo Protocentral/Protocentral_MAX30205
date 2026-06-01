@@ -1,85 +1,143 @@
-# Protocentral MAX30205 Human Body Temperature Sensor Breakout Board
+# Protocentral MAX30205 Body Temperature Sensor Library
 
 [![Compile Examples](https://github.com/Protocentral/Protocentral_MAX30205/workflows/Compile%20Examples/badge.svg)](https://github.com/Protocentral/Protocentral_MAX30205/actions?workflow=Compile+Examples)
 
-## Don't have one ? [Buy it here](https://protocentral.com/product/protocentral-max30205-body-temperature-sensor-breakout-board/)
+Arduino library for the Protocentral MAX30205 human body temperature sensor breakout board.
 
-You can buy the Qwiic compatible MAX30205 [here](https://protocentral.com/product/protocentral-max30205-wearable-body-thermometer-breakout-board-qwiic-compatible/).
+## Don't have one? [Buy it here](https://protocentral.com/product/protocentral-max30205-body-temperature-sensor-breakout-board/)
 
+You can buy the Qwiic-compatible MAX30205 [here](https://protocentral.com/product/protocentral-max30205-wearable-body-thermometer-breakout-board-qwiic-compatible/).
 
 ![MAX30205 Temperature Sensor](docs/images/max30205_brk_0.jpg)
 ![MAX30205 Temperature Sensor](docs/images/max30205_brk_v2.jpg)
 
+The QWIIC-compatible ProtoCentral MAX30205 breakout board is a wearable human body temperature sensor that reads with an accuracy of +/-0.1 °C. This is a digital I2C-based sensor, so no external ADC is required.
 
-The QWIIC-compatible ProtoCentral MAX30205 breakout board is a wearable human body temperature sensor that reads with an accuracy of +/- 0.1 °C.This is a digital I2C-based sensor, so an ADC would not be required to read this sensor.
+This version of the board is round and designed to be directly wearable by exposing an aluminium surface. The aluminium-base PCB helps in easy thermal conduction so that most of the heat gets transferred to the sensor, resulting in more accurate readings. The top side of the PCB is encapsulated in clear epoxy resin to make it waterproof, and it uses a medical-grade, biocompatible, flexible cable that does not irritate the skin.
 
-In addition, this version of the board is round and designed to be be directly wearable by exposing an Aluminium surface. The alumnium-base PCB helps in easy thermal conduction to make sure most of the heat gets transferred to the sensor, resulting in more accurate readings. The top side of this PCB is encapsulated in clear epoxy resin to make it waterproof. 
+## Features
 
-Unlike our previous MAX30205 breakout board, what makes it more wearable and fit for human body measurements is the use of a medical-grade biocompatible, flexible cable that does not irritate the skin.
+- Digital I2C body temperature sensor — no external ADC needed
+- High accuracy of +/-0.1 °C over the 37 °C to 39 °C range
+- 16-bit resolution (1 LSB = 0.00390625 °C)
+- Reads temperature in Celsius or Fahrenheit
+- Automatic address scanning (0x48 / 0x49)
+- Low-power shutdown mode (<3.5 µA)
+- Works on any board with `Wire` (AVR, SAMD, ESP32, ESP8266, RP2040, STM32, and more)
+
+## Installation
+
+### Arduino Library Manager (Recommended)
+1. Open the Arduino IDE
+2. Go to **Sketch → Include Library → Manage Libraries**
+3. Search for "Protocentral MAX30205"
+4. Click **Install**
+
+### Manual Installation
+1. Download or clone this repository
+2. Copy it into your Arduino libraries folder (`~/Documents/Arduino/libraries/`)
 
 ## Hardware Setup
 
-Connection with the Arduino board is as follows:
+Connect the breakout board to the Arduino as follows:
 
-|MAX30205 pin label| Arduino Connection   |Pin Function      |
-|----------------- |:--------------------:|-----------------:|
-| 5v      |    Vin (3.3V is also supported, change solder jumper behind the board. Default will be 5V)  | Power Supply |
-| GND     |  GND | Power Supply |
-| A4      |  SDA | Serial Data |
-| A5      |  SCL | Serial Data |
+| MAX30205 pin | Arduino connection | Pin function |
+|--------------|--------------------|--------------|
+| Vin / 5V | Vin (3.3V also supported, change the solder jumper on the back; default is 5V) | Power supply |
+| GND | GND | Ground |
+| SDA | A4 (or the board's SDA pin) | Serial data |
+| SCL | A5 (or the board's SCL pin) | Serial clock |
 
+## Quick Start
 
-# Visualizing Output
+```cpp
+#include <Wire.h>
+#include "Protocentral_MAX30205.h"
+
+MAX30205 tempSensor;
+
+void setup() {
+  Serial.begin(115200);
+  Wire.begin();
+
+  // Scan for the sensor at 0x48 / 0x49 until one is found
+  while (!tempSensor.scanAvailableSensors()) {
+    Serial.println("Couldn't find the temperature sensor, please connect the sensor.");
+    delay(5000);
+  }
+
+  tempSensor.begin();   // Continuous conversion, active mode
+}
+
+void loop() {
+  Serial.print(tempSensor.getTemperature(), 2);
+  Serial.println(" C");
+  delay(100);
+}
+```
+
+### Using a custom I2C bus or address
+
+The constructor accepts an explicit I2C address and `TwoWire` instance:
+
+```cpp
+MAX30205 tempSensor(MAX30205_ADDRESS2, Wire1);   // 0x48 on the Wire1 bus
+```
+
+## API Reference
+
+### Constructor
+
+```cpp
+MAX30205(uint8_t sensorAddress = MAX30205_ADDRESS1, TwoWire &wirePort = Wire)
+```
+
+### Methods
+
+| Method | Description |
+|--------|-------------|
+| `begin()` | Configure continuous conversion mode; returns `true` if the sensor responds |
+| `scanAvailableSensors()` | Probe addresses 0x48 and 0x49, latch the one that responds; returns `true` if found |
+| `getTemperature()` | Read the body temperature in degrees Celsius |
+| `getTemperatureF()` | Read the body temperature in degrees Fahrenheit |
+| `shutdown()` | Put the device into low-power shutdown mode |
+| `printRegisters()` | Dump the register contents to `Serial` for debugging |
+
+### Constants
+
+| Constant | Value | Description |
+|----------|-------|-------------|
+| `MAX30205_ADDRESS1` | `0x49` | Default I2C address |
+| `MAX30205_ADDRESS2` | `0x48` | Alternate I2C address |
+| `MAX30205_RESOLUTION` | `0.00390625` | Degrees Celsius per LSB |
+
+## Examples
+
+| Example | Description |
+|---------|-------------|
+| `01-basic-temperature-reading` | Print temperature in Celsius and Fahrenheit to the Serial Monitor |
+| `02-temperature-serial-plotter` | Stream temperature to the Arduino Serial Plotter |
+
+## Visualizing Output
+
+Open the Arduino Serial Monitor (or Serial Plotter) at 115200 baud to view the readings.
 
 ![output](./docs/images/output.png)
 
+## Documentation
 
-## For further details, refer [the documentation on MAX30205 breakout board](https://docs.protocentral.com/getting-started-with-MAX30205//)
+For further details, refer to [the documentation on the MAX30205 breakout board](https://docs.protocentral.com/getting-started-with-MAX30205/).
 
-License Information
-===================
+## License
 
-![License](./license_mark.svg)
+![License](license_mark.svg)
 
-This product is open source! Both, our hardware and software are open source and licensed under the following licenses:
+This product is open source! Both our hardware and software are open source and licensed under the following licenses:
 
-Hardware
----------
+**Hardware:** [Creative Commons Share-alike 4.0 International](http://creativecommons.org/licenses/by-sa/4.0/) ![CC-BY-SA-4.0](https://i.creativecommons.org/l/by-sa/4.0/88x31.png)
 
-**All hardware is released under the [CERN-OHL-P v2](https://ohwr.org/cern_ohl_p_v2.txt)** license.
+**Software:** [MIT License](http://opensource.org/licenses/MIT)
 
-Copyright CERN 2020.
+**Documentation:** [Creative Commons Share-alike 4.0 International](http://creativecommons.org/licenses/by-sa/4.0/)
 
-This source describes Open Hardware and is licensed under the CERN-OHL-P v2.
-
-You may redistribute and modify this documentation and make products
-using it under the terms of the CERN-OHL-P v2 (https:/cern.ch/cern-ohl).
-This documentation is distributed WITHOUT ANY EXPRESS OR IMPLIED
-WARRANTY, INCLUDING OF MERCHANTABILITY, SATISFACTORY QUALITY
-AND FITNESS FOR A PARTICULAR PURPOSE. Please see the CERN-OHL-P v2
-for applicable conditions
-
-Software
---------
-
-**All software is released under the MIT License(http://opensource.org/licenses/MIT).**
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-Documentation
--------------
-**All documentation is released under [Creative Commons Share-alike 4.0 International](http://creativecommons.org/licenses/by-sa/4.0/).**
-![CC-BY-SA-4.0](https://i.creativecommons.org/l/by-sa/4.0/88x31.png)
-
-You are free to:
-
-* Share — copy and redistribute the material in any medium or format
-* Adapt — remix, transform, and build upon the material for any purpose, even commercially.
-The licensor cannot revoke these freedoms as long as you follow the license terms.
-
-Under the following terms:
-
-* Attribution — You must give appropriate credit, provide a link to the license, and indicate if changes were made. You may do so in any reasonable manner, but not in any way that suggests the licensor endorses you or your use.
-* ShareAlike — If you remix, transform, or build upon the material, you must distribute your contributions under the same license as the original.
-
-Please check [*LICENSE.md*](LICENSE.md) for detailed license descriptions.
+See [LICENSE.md](LICENSE.md) for the full license text.

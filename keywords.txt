@@ -1,0 +1,40 @@
+#######################################
+# Syntax Coloring Map for MAX30205
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+MAX30205 KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+begin KEYWORD2
+scanAvailableSensors KEYWORD2
+getTemperature KEYWORD2
+getTemperatureF KEYWORD2
+shutdown KEYWORD2
+printRegisters KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+
+MAX30205_ADDRESS1 LITERAL1
+MAX30205_ADDRESS2 LITERAL1
+MAX30205_TEMPERATURE LITERAL1
+MAX30205_CONFIGURATION LITERAL1
+MAX30205_THYST LITERAL1
+MAX30205_TOS LITERAL1
+MAX30205_RESOLUTION LITERAL1
+SHUTDOWN LITERAL1
+COMPARATOR LITERAL1
+OS_POLARITY LITERAL1
+FAULT_QUEUE_0 LITERAL1
+FAULT_QUEUE_1 LITERAL1
+DATA_FORMAT LITERAL1
+TIME_OUT LITERAL1
+ONE_SHOT LITERAL1

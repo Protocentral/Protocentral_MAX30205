@@ -1,44 +1,64 @@
 //////////////////////////////////////////////////////////////////////////////////////////
 //
-//    Arduino library for the MAX30205 body temperature sensor breakout board
+//  Protocentral MAX30205 Arduino Library
 //
-//    Author: Ashwin Whitchurch
-//    Copyright (c) 2018 ProtoCentral
+//  Author: Ashwin Whitchurch
+//  Copyright (c) 2018-2025 Protocentral Electronics
 //
-//    This software is licensed under the MIT License(http://opensource.org/licenses/MIT).
+//  SPDX-License-Identifier: MIT
 //
-//   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
-//   NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-//   IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-//   WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
-//   SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+//  Permission is hereby granted, free of charge, to any person obtaining a copy
+//  of this software and associated documentation files (the "Software"), to deal
+//  in the Software without restriction, including without limitation the rights
+//  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+//  copies of the Software, and to permit persons to whom the Software is
+//  furnished to do so, subject to the following conditions:
 //
-//   For information on how to use, visit https://github.com/protocentral/ProtoCentral_MAX30205
-/////////////////////////////////////////////////////////////////////////////////////////
+//  The above copyright notice and this permission notice shall be included in all
+//  copies or substantial portions of the Software.
+//
+//  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+//  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+//  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+//  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+//  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+//  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+//  SOFTWARE.
+//
+//  For more information, visit https://github.com/Protocentral/Protocentral_MAX30205
+//
+//////////////////////////////////////////////////////////////////////////////////////////
 
-#include "Arduino.h"
-#include <Wire.h>
 #include "Protocentral_MAX30205.h"
 
-float MAX30205::getTemperature(void){
-	uint8_t readRaw[2] = {0};
-    I2CreadBytes(sensorAddress,MAX30205_TEMPERATURE, &readRaw[0] ,2); // read two bytes
-	int16_t raw = readRaw[0] << 8 | readRaw[1];  //combine two bytes
-    temperature = raw  * 0.00390625;     // convert to temperature
-	return  temperature;
+MAX30205::MAX30205(uint8_t sensorAddress, TwoWire &wirePort) {
+  this->sensorAddress = sensorAddress;
+  _wire = &wirePort;
 }
 
-bool MAX30205::scanAvailableSensors(void){
+bool MAX30205::begin() {
+  _wire->beginTransmission(sensorAddress);
+  if (_wire->endTransmission() != 0) {
+    return false;   // No device responded at this address
+  }
+
+  writeRegister(MAX30205_CONFIGURATION, 0x00);  // Continuous conversion, comparator mode
+  writeRegister(MAX30205_THYST, 0x00);          // Hysteresis threshold
+  writeRegister(MAX30205_TOS, 0x00);            // Over-temperature shutdown threshold
+  return true;
+}
+
+bool MAX30205::scanAvailableSensors() {
   bool sensorFound = false;
 
-  WIRE.beginTransmission (MAX30205_ADDRESS1);
-  if (WIRE.endTransmission () == 0){
+  _wire->beginTransmission(MAX30205_ADDRESS1);
+  if (_wire->endTransmission() == 0) {
     sensorAddress = MAX30205_ADDRESS1;
     sensorFound = true;
   }
-  
-  WIRE.beginTransmission (MAX30205_ADDRESS2);
-  if(WIRE.endTransmission () == 0){
+
+  _wire->beginTransmission(MAX30205_ADDRESS2);
+  if (_wire->endTransmission() == 0) {
     sensorAddress = MAX30205_ADDRESS2;
     sensorFound = true;
   }
@@ -46,52 +66,58 @@ bool MAX30205::scanAvailableSensors(void){
   return sensorFound;
 }
 
-void MAX30205::shutdown(void){
-  uint8_t reg = I2CreadByte(sensorAddress, MAX30205_CONFIGURATION);  // Get the current register
-  I2CwriteByte(sensorAddress, MAX30205_CONFIGURATION, reg | 0x80);
+float MAX30205::getTemperature() {
+  uint8_t raw[2] = {0};
+  readRegisters(MAX30205_TEMPERATURE, raw, 2);  // Read the two temperature bytes
+
+  int16_t value = (int16_t)((raw[0] << 8) | raw[1]);  // Combine MSB and LSB
+  temperature = value * MAX30205_RESOLUTION;          // Convert to degrees Celsius
+  return temperature;
 }
 
-void MAX30205::begin(void){
-  I2CwriteByte(sensorAddress, MAX30205_CONFIGURATION, 0x00); //mode config
-  I2CwriteByte(sensorAddress, MAX30205_THYST , 		 0x00); // set threshold
-  I2CwriteByte(sensorAddress, MAX30205_TOS, 			 0x00); //
+float MAX30205::getTemperatureF() {
+  return getTemperature() * 9.0f / 5.0f + 32.0f;
 }
 
-void MAX30205::printRegisters(void){
-  Serial.println(I2CreadByte(sensorAddress, MAX30205_TEMPERATURE),  BIN);
-  Serial.println(I2CreadByte(sensorAddress, MAX30205_CONFIGURATION),  BIN);
-  Serial.println(I2CreadByte(sensorAddress, MAX30205_THYST), BIN);
-  Serial.println(I2CreadByte(sensorAddress, MAX30205_TOS), BIN);
-
+void MAX30205::shutdown() {
+  uint8_t reg = readRegister(MAX30205_CONFIGURATION);   // Get the current configuration
+  writeRegister(MAX30205_CONFIGURATION, reg | 0x80);    // Set the shutdown bit
 }
 
-// Wire.h read and write protocols
-void MAX30205::I2CwriteByte(uint8_t address, uint8_t subAddress, uint8_t data){
-	WIRE.beginTransmission(address);  // Initialize the Tx buffer
-	WIRE.write(subAddress);           // Put slave register address in Tx buffer
-	WIRE.write(data);                 // Put data in Tx buffer
-	WIRE.endTransmission();           // Send the Tx buffer
+void MAX30205::printRegisters() {
+  Serial.println(readRegister(MAX30205_TEMPERATURE), BIN);
+  Serial.println(readRegister(MAX30205_CONFIGURATION), BIN);
+  Serial.println(readRegister(MAX30205_THYST), BIN);
+  Serial.println(readRegister(MAX30205_TOS), BIN);
 }
 
-uint8_t MAX30205::I2CreadByte(uint8_t address, uint8_t subAddress){
-	uint8_t data; // `data` will store the register data
-	WIRE.beginTransmission(address);
-	WIRE.write(subAddress);
-	WIRE.endTransmission(false);
-	WIRE.requestFrom(address, (uint8_t) 1);
-	data = WIRE.read();
-	return data;
+// ---------------------------------------------------------------------------
+// Low-level I2C helpers
+// ---------------------------------------------------------------------------
+
+void MAX30205::writeRegister(uint8_t reg, uint8_t data) {
+  _wire->beginTransmission(sensorAddress);  // Initialize the Tx buffer
+  _wire->write(reg);                        // Put the register address in the Tx buffer
+  _wire->write(data);                       // Put the data in the Tx buffer
+  _wire->endTransmission();                 // Send the Tx buffer
 }
 
-void MAX30205::I2CreadBytes(uint8_t address, uint8_t subAddress, uint8_t * dest, uint8_t count){
-	WIRE.beginTransmission(address);   // Initialize the Tx buffer
-	// Next send the register to be read. OR with 0x80 to indicate multi-read.
-	WIRE.write(subAddress);
-	WIRE.endTransmission(false);
-	uint8_t i = 0;
-	WIRE.requestFrom(address, count);  // Read bytes from slave register address
-	while (WIRE.available())
-	{
-		dest[i++] = WIRE.read();
-	}
+uint8_t MAX30205::readRegister(uint8_t reg) {
+  _wire->beginTransmission(sensorAddress);
+  _wire->write(reg);
+  _wire->endTransmission(false);
+  _wire->requestFrom(sensorAddress, (uint8_t)1);
+  return _wire->read();
+}
+
+void MAX30205::readRegisters(uint8_t reg, uint8_t *dest, uint8_t count) {
+  _wire->beginTransmission(sensorAddress);
+  _wire->write(reg);
+  _wire->endTransmission(false);
+
+  uint8_t i = 0;
+  _wire->requestFrom(sensorAddress, count);
+  while (_wire->available()) {
+    dest[i++] = _wire->read();
+  }
 }
